@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generátor náhodných hesel</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/565/565547.png" type="image/png" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.4s, color 0.4s;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      animation: fadein 1s ease;
+    }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      margin-bottom: 24px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: left;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      outline: none;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      transition: background-color 0.4s, color 0.4s;
+    }
+    input[type="number"]::placeholder {
+      color: #ddd;
+    }
+    .checkbox-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .checkbox-group label {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    button {
+      background-color: #5a67d8;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #434190;
+      transform: scale(1.02);
+    }
+    textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: none;
+      resize: none;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      font-family: monospace;
+      transition: background-color 0.4s, color 0.4s;
+    }
+    #copyMessage {
+      margin: 8px 0;
+      font-size: 0.95rem;
+      color: #90ee90;
+      display: none;
+    }
+    #strength {
+      font-size: 1rem;
+      margin: 6px 0;
+      font-weight: bold;
+    }
+    #tips {
+      font-size: 0.85rem;
+      margin-top: 10px;
+      color: #ddd;
+      text-align: left;
+      transition: color 0.4s;
+    }
+
+    /* Tmavě modrý režim */
+    body.dark-blue {
+      background: linear-gradient(135deg, #2c3e50, #4ca1af);
+      color: #ddd;
+    }
+    body.dark-blue .container {
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 24px rgba(255,255,255,0.1);
+      color: #ddd;
+    }
+    body.dark-blue input[type="number"],
+    body.dark-blue textarea {
+      background: rgba(0,0,0,0.4);
+      color: #eee;
+    }
+    body.dark-blue button {
+      background-color: #3498db;
+    }
+    body.dark-blue button:hover {
+      background-color: #2980b9;
+    }
+    body.dark-blue #tips {
+      color: #ccc;
+    }
+
+    /* Černý tmavý režim */
+    body.dark-black {
+      background: #121212;
+      color: #e0e0e0;
+    }
+    body.dark-black .container {
+      background: #1e1e1e;
+      box-shadow: 0 8px 24px rgba(255,255,255,0.1);
+      color: #e0e0e0;
+    }
+    body.dark-black input[type="number"],
+    body.dark-black textarea {
+      background: #2c2c2c;
+      color: #eee;
+      border: 1px solid #444;
+    }
+    body.dark-black button {
+      background-color: #bb86fc;
+      color: #121212;
+    }
+    body.dark-black button:hover {
+      background-color: #9a63d3;
+      color: #fff;
+    }
+    body.dark-black #tips {
+      color: #bbb;
+    }
+
+    /* Světlý režim */
+    body.light {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+    }
+    body.light .container {
+      background: rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      color: #fff;
+    }
+    body.light input[type="number"],
+    body.light textarea {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+    }
+    body.light button {
+      background-color: #5a67d8;
+      color: white;
+    }
+    body.light button:hover {
+      background-color: #434190;
+    }
+    body.light #tips {
+      color: #ddd;
+    }
+
+    /* Tlačítko přepínání */
+    #toggleDark {
+      background-color: transparent;
+      border: 2px solid currentColor;
+      color: inherit;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      width: auto;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    #toggleDark:hover {
+      background-color: currentColor;
+      color: #fff;
+    }
+  </style>
+</head>
+<body class="light">
+  <div class="container">
+    <h1>Generátor náhodných hesel</h1>
+
+    <button id="toggleDark">Tmavý režim</button>
+
+    <label for="length">Délka hesla:</label>
+    <input type="number" id="length" value="12" min="4" max="64" />
+
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="lowercase" checked /> Malá písmena</label>
+      <label><input type="checkbox" id="uppercase" checked /> Velká písmena</label>
+      <label><input type="checkbox" id="numbers" checked /> Čísla</label>
+      <label><input type="checkbox" id="special" checked /> Speciální znaky</label>
+    </div>
+
+    <button id="generate">Vygenerovat</button>
+    <button id="copy">Kopírovat (jednorázově)</button>
+
+    <p>Vygenerované heslo:</p>
+    <textarea id="password" rows="2" readonly></textarea>
+
+    <p id="strength"></p>
+    <p id="copyMessage">Heslo zkopírováno a smazáno ✅</p>
+
+    <div id="tips">
+      🛡️ Tipy pro zabezpečení:<br>
+      – Nikdy nepoužívej stejné heslo vícekrát.<br>
+      – Používej správce hesel.<br>
+      – Dlouhá hesla jsou bezpečnější.
+    </div>
+  </div>
+
+  <script>
+    const body = document.body;
+    const toggleBtn = document.getElementById('toggleDark');
+
+    // Pořadí módů
+    const modes = ['light', 'dark-blue', 'dark-black'];
+    let currentModeIndex = 0;
+
+    function updateButtonText(mode) {
+      if (mode === 'light') return 'Tmavý režim';
+      if (mode === 'dark-blue') return 'Černý tmavý režim';
+      if (mode === 'dark-black') return 'Světlý režim';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      // Odstraň všechny třídy módů
+      modes.forEach(m => body.classList.remove(m));
+
+      // Přepni na další mód
+      currentModeIndex = (currentModeIndex + 1) % modes.length;
+      const newMode = modes[currentModeIndex];
+      body.classList.add(newMode);
+
+      // Aktualizuj text tlačítka
+      toggleBtn.textContent = updateButtonText(newMode);
+    });
+
+    function generatePassword(length, options) {
+      let chars = '';
+      if (options.lowercase) chars += 'abcdefghijklmnopqrstuvwxyz';
+      if (options.uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      if (options.numbers) chars += '0123456789';
+      if (options.special) chars += '!@#$%^&*()_+{}:"<>?|[];\',./`~';
+
+      if (!chars) return '';
+
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return password;
+    }
+
+    function evaluateStrength(pwd) {
+      const strengthText = document.getElementById('strength');
+      let strength = 0;
+      if (pwd.length >= 8) strength++;
+      if (/[A-Z]/.test(pwd)) strength++;
+      if (/[0-9]/.test(pwd)) strength++;
+      if (/[^A-Za-z0-9]/.test(pwd)) strength++;
+      if (strength <= 1) {
+        strengthText.textContent = "Síla hesla: slabé ❌";
+        strengthText.style.color = "red";
+      } else if (strength === 2 || strength === 3) {
+        strengthText.textContent = "Síla hesla: střední ⚠️";
+        strengthText.style.color = "orange";
+      } else {
+        strengthText.textContent = "Síla hesla: silné ✅";
+        strengthText.style.color = "lightgreen";
+      }
+    }
+
+    document.getElementById('generate').addEventListener('click', () => {
+      const length = parseInt(document.getElementById('length').value);
+      if (isNaN(length) || length < 4 || length > 64) {
+        alert('Zadej délku hesla od 4 do 64.');
+        return;
+      }
+
+      const options = {
+        lowercase: document.getElementById('lowercase').checked,
+        uppercase: document.getElementById('uppercase').checked,
+        numbers: document.getElementById('numbers').checked,
+        special: document.getElementById('special').checked,
+      };
+
+      const pwd = generatePassword(length, options);
+
+      if (!pwd) {
+        alert('Vyber alespoň jednu kategorii znaků.');
+        return;
+      }
+
+      const passwordField = document.getElementById('password');
+      passwordField.value = pwd;
+      evaluateStrength(pwd);
+      document.getElementById('copyMessage').style.display = 'none';
+    });
+
+    document.getElementById('copy').addEventListener('click', () => {
+      const pwdField = document.getElementById('password');
+      if (!pwdField.value) return;
+
+      pwdField.select();
+      pwdField.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(pwdField.value).then(() => {
+        document.getElementById('copyMessage').style.display = 'block';
+        pwdField.value = '';
+        document.getElementById('strength').textContent = '';
+      });
+    });
+  </script>
+</body>
+</html>
