@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generátor náhodných hesel</title>
+</head>
+<body>
+  <h1>Generátor náhodných hesel</h1>
+  
+  <label for="length">Délka hesla:</label>
+  <input type="number" id="length" value="12" min="4" max="64" />
+  <button id="generate">Vygenerovat</button>
+  
+  <p>Vygenerované heslo:</p>
+  <textarea id="password" rows="2" cols="30" readonly></textarea>
+  
+  <script>
+    function generatePassword(length) {
+      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}:"<>?|[];\',./`~';
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return password;
+    }
+    
+    document.getElementById('generate').addEventListener('click', () => {
+      const length = parseInt(document.getElementById('length').value);
+      if (isNaN(length) || length < 4 || length > 64) {
+        alert('Zadej délku hesla od 4 do 64.');
+        return;
+      }
+      const pwd = generatePassword(length);
+      document.getElementById('password').value = pwd;
+    });
+  </script>
+</body>
+</html>
