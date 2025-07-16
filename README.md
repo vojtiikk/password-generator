@@ -1,4 +1,4 @@
-# password-generator
+
 # Generátor náhodných hesel
 
 Jednoduchá webová aplikace pro generování silných náhodných hesel.
@@ -21,5 +21,3 @@ Jednoduchá webová aplikace pro generování silných náhodných hesel.
 Tato aplikace je hostovaná zdarma pomocí [GitHub Pages](https://pages.github.com/).
 
 ---
-
-Vytvořil Vojta — otevřený zdrojový kód.
