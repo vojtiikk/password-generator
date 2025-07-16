@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generátor náhodných hesel</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 24px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: left;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      outline: none;
+    }
+    .checkbox-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .checkbox-group label {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    button {
+      background-color: #5a67d8;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #434190;
+    }
+    textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: none;
+      resize: none;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Generátor náhodných hesel</h1>
+    
+    <label for="length">Délka hesla:</label>
+    <input type="number" id="length" value="12" min="4" max="64" />
+
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="lowercase" checked /> Malá písmena</label>
+      <label><input type="checkbox" id="uppercase" checked /> Velká písmena</label>
+      <label><input type="checkbox" id="numbers" checked /> Čísla</label>
+      <label><input type="checkbox" id="special" checked /> Speciální znaky</label>
+    </div>
+    
+    <button id="generate">Vygenerovat</button>
+    <button id="copy">Kopírovat</button>
+    
+    <p>Vygenerované heslo:</p>
+    <textarea id="password" rows="2" readonly></textarea>
+  </div>
+
+  <script>
+    function generatePassword(length, options) {
+      let chars = '';
+      if (options.lowercase) chars += 'abcdefghijklmnopqrstuvwxyz';
+      if (options.uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      if (options.numbers) chars += '0123456789';
+      if (options.special) chars += '!@#$%^&*()_+{}:"<>?|[];\',./`~';
+
+      if (!chars) return '';
+
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return password;
+    }
+
+    document.getElementById('generate').addEventListener('click', () => {
+      const length = parseInt(document.getElementById('length').value);
+      if (isNaN(length) || length < 4 || length > 64) {
+        alert('Zadej délku hesla od 4 do 64.');
+        return;
+      }
+
+      const options = {
+        lowercase: document.getElementById('lowercase').checked,
+        uppercase: document.getElementById('uppercase').checked,
+        numbers: document.getElementById('numbers').checked,
+        special: document.getElementById('special').checked,
+      };
+
+      const pwd = generatePassword(length, options);
+
+      if (!pwd) {
+        alert('Vyber alespoň jednu kategorii znaků.');
+        return;
+      }
+
+      document.getElementById('password').value = pwd;
+    });
+
+    document.getElementById('copy').addEventListener('click', () => {
+      const pwdField = document.getElementById('password');
+      if (!pwdField.value) return alert('Nejdřív vygeneruj heslo.');
+      pwdField.select();
+      pwdField.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(pwdField.value)
+        .then(() => alert('Heslo zkopírováno do schránky!'))
+        .catch(() => alert('Nepodařilo se zkopírovat heslo.'));
+    });
+  </script>
+</body>
+</html>
